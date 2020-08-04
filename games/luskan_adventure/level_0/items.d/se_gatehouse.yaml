@@ -1,0 +1,8 @@
+config:
+  name: Guardhouse
+  description: "A refuge for the guards"
+  start_location: <level_0.locations.se_gatehouse>.name
+  examine_text: "The guardhouse is empty. That's more than a little strange for a city as important as Luskan. Something doesn't seem right here. Where are the people?"
+  takeable: false
+  is_container: true
+

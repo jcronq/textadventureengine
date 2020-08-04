@@ -1,0 +1,14 @@
+config:
+    name: The Cutlass
+    description: "Luskan's infamous pub. Sits on the border of the Market District and the Docks."
+    connections:
+        - direction: southeast gatehouse
+          location: <level_0.locations.se_gatehouse>
+          travel_blockade: 
+              to: 
+                  failure: "You wander the streets, but your mind keeps drifting back to the otherworldy music that seems to be permeating the town.  After several minutes of walking, you realize that you haven't been paying attention to where you were going.  To you surprise, you find yourself back at The Cutalass."
+        - direction: market square
+          location: <level_0.locations.the_market_square>
+          travel_description:
+              to: "You follow the otherworldly music as it becomes louder and louder. As you get closer, you feel your mind drift further and further away from you the closer you get to the source."
+

@@ -1,0 +1,10 @@
+# This name MUST match the name of the file.
+config:
+  description: An abandoned glass of beer.
+  drop_text: I'll come back for you later.
+  examine_text: A half empty glass of beer abandoned on a table.
+  is_container: false
+  name: Half empty glass
+  start_location: <level_0.locations.the_cutlass>.name
+  take_text: Ohh... free beer.
+  takeable: true

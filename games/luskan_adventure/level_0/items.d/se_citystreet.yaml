@@ -1,0 +1,8 @@
+config:
+  name: Road into Luskan
+  description: "A city street"
+  start_location: <level_0.locations.se_gatehouse>.name
+  examine_text: "The road leading past the South East gates is devoid of people. Not even the beggars can be found. This doesn't seem right.  It's usually so busy."
+  takeable: false
+  is_container: false
+

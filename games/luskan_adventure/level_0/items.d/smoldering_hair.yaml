@@ -1,0 +1,10 @@
+# This name MUST match the name of the file.
+ config:
+  description: A small pile of smoldering hair.
+  drop_text: I don't remember why I picked this up.
+  examine_text: Hmm... it smells like burnt hair.
+  is_container: false
+  name: Smoldering Hair
+  start_location: <level_0.locations.se_gatehouse>.name
+  take_text: I wonder who left this here...
+  takeable: true

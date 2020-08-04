@@ -1,0 +1,8 @@
+config:
+  name: City Gates
+  description: "Large wooden doors"
+  start_location: <level_0.locations.se_gatehouse>.name
+  examine_text: "A cacaphonic music echoes off the mighty doors from deep within Luskan. The large doors loom open, as if welcoming you inside."
+  takeable: false
+  is_container: false
+

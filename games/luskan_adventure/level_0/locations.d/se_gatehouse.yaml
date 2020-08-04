@@ -1,0 +1,13 @@
+config:
+    name: South East Gatehouse
+    description: "The large gates at the south-east of Luskan are wide open"
+    connections:
+        - direction: "the cutlass"
+          location: <level_0.locations.the_cutlass>
+          travel_description:
+              to: "You make your way through the streets of Luskan, the streets are eerily empty. No matter where you go, the sounds of an outherworldy music follow you." 
+        - direction: "market square"
+          location: <level_0.locations.the_market_square>
+          travel_description:
+              to: "You follow the otherwordly music as it becomes louder and louder.  As you get closer, you feel your mind drift further and further away from you the closer you get to the source."
+

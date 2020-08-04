@@ -1,0 +1,10 @@
+ config:
+  name: Rusty Knife
+  description: "It's going to give me tetanus..."
+  start_location: <level_0.items.se_gatehouse>.name
+  examine_text: "It's even rustier up close."
+  takeable: true
+  take_text: "I very carefully pick up the rusty knife.  Last thing I need right now is lockjaw."
+  is_container: false
+  drop_text: "Crap... it knicked me."
+
