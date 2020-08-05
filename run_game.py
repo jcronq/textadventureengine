@@ -7,6 +7,7 @@ from src.core.game import Game
 from src.core.parser import Parser
 from src.core.engine import Engine
 from src.config.load import GameLoader
+from src.text.views import bashBlockPrint, bashRawPrint
 
 data_dir = f"{os.environ['HOME']}/.data"
 save_dir = f"{data_dir}/save"
@@ -59,5 +60,5 @@ if len(save_files) > 0:
 
 parser = Parser()
 engine = Engine(game, parser)
-engine.run(debug=False)
+engine.run_loop(bashRawPrint, debug=False)
 

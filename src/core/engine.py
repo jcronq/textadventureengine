@@ -33,9 +33,24 @@ class Engine:
         self.game   = game
         self.parser = parser
 
-    def run(self, debug=False):
+    def update(self, game_printer, in_str, debug=False):
+        command_obj = self.parser.parse_command(in_str)
+        if debug:
+            txt.utilPrint(f"State: {self.game.getFullState()}")
+        command = command_handlers.get(command_obj['intent'], None)
+        if command is not None:
+            if debug:
+                txt.utilPrint(f"Calling: {command_obj['intent']}(game, {command_obj['args']})")
+            command(self.game, command_obj['args'])
+            return self.game.getText()
+        else:
+            return [f"Unknown command: {command_obj['intent']}"]
+
+
+    def run_loop(self, game_printer, debug=False):
         command = command_handlers.get('examine', None)
         command(self.game, {})
+        game_printer(self.game.getText())
         while GAME_RUNNING:
             in_str = txt.getInput()
             command_obj = self.parser.parse_command(in_str)
@@ -46,6 +61,7 @@ class Engine:
                 if debug:
                     txt.utilPrint(f"Calling: {command_obj['intent']}(game, {command_obj['args']})")
                 command(self.game, command_obj['args'])
+                game_printer(self.game.getText())
             else:
                 txt.utilPrint(f"Unknown command: {command_obj['intent']}")
         txt.utilPrint(f"Exiting game.")

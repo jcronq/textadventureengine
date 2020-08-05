@@ -2,6 +2,7 @@ from src.core.stateManager import StateManager
 
 from functools import partial
 import copy
+import queue
 
 PLAYER_LOCATION = 'player.location'
 ITEM_ROOT = 'items'
@@ -15,6 +16,7 @@ class Game:
     stateManager = StateManager()
     locations = {}
     items = {}
+    text_buffer = queue.Queue()
 
     def __init__(self, start_location, locations, items):
         for location in locations:
@@ -24,6 +26,24 @@ class Game:
             print(item.name, item.start_location)
             self.setItemLocation(item.name, item.start_location)
         self.setPlayerLocation(start_location)
+
+    def getText(self):
+        result = []
+        while not self.text_buffer.empty() > 0:
+            result.append(self.text_buffer.get())
+        return result
+
+    def report(self, reportable):
+        if isinstance(reportable, str):
+            self.text_buffer.put(reportable)
+        elif isinstance(reportable, list):
+            for txt in reportable:
+                if isinstance(txt, str):
+                    self.text_buffer.put(txt)
+                else:
+                    raise Exception()
+        else:
+            raise Exception()
 
     def load(self, state):
         self.stateManager.overrideStates(state)

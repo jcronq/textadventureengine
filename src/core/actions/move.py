@@ -1,4 +1,3 @@
-import src.text.textIO as txt
 from src.core.actions.examine import examine
 from src.core.actions.help import actionHelp
 from src.core.stateManager import StateManager
@@ -9,7 +8,7 @@ def move(game, args={}):
     else:
         new_location_name = args.get('location', None)
         if new_location_name is None or new_location_name == '':
-            txt.printGameBlock("I don't understand where you want me to go.")
+            game.report("I don't understand where you want me to go.")
             return
         current_location = game.getPlayerLocation()
         current_location_name = current_location.name
@@ -45,7 +44,7 @@ def move(game, args={}):
 
             travel_txt += getLocationTextBlock(game)
 
-        txt.printGameBlock(travel_txt)
+        game.report(travel_txt)
 
 def getLocationPrint(new_location_name):
     if new_location_name in ['north', 'south', 'east', 'west']:

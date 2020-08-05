@@ -214,3 +214,14 @@ def getOption(prompt, options, default_selection = -1, numeral_color='yellow', b
         else:
             return selection
 
+def formatHtmlBlock(msg_block):
+    new_txt = []
+    if isinstance(txt, list):
+        for i, line in enumerate(txt):
+            new_txt.append(removeNewline(line).replace("<br>", " \n"))
+            if i != len(txt) -1:
+                new_txt.append(' ')
+    else:
+        new_txt.append(removeNewline(txt))
+    return new_txt
+

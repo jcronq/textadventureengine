@@ -1,4 +1,7 @@
 nltk
 termcolor
 pyyaml
+fastapi
+pydantic
+uvicorn
 

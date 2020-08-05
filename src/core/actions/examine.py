@@ -1,5 +1,3 @@
-import src.text.textIO as txt
-
 def examine(game, args, debug=False):
     obj_name_to_examine = args.get('item', None)
     if obj_name_to_examine is None:
@@ -14,13 +12,13 @@ def examine(game, args, debug=False):
         obj_to_examine.name.lower() not in inventory_contents \
         and obj_to_examine.name.lower() not in room_contents \
         and obj_to_examine.name.lower() != current_room):
-        txt.printGameBlock([f"Hmm... Nope, I don't see any *{obj_name_to_examine}* here."])
+        game.report([f"Hmm... Nope, I don't see any *{obj_name_to_examine}* here."])
     elif obj_to_examine.name.lower() == current_room:
         txt_block = getLocationTextBlock(game)
-        txt.printGameBlock(txt_block)
+        game.report(txt_block)
     else:
         txt_block = getItemTextBlock(game, obj_to_examine)
-        txt.printGameBlock(txt_block)
+        game.report(txt_block)
 
 def getItemTextBlock(game, item):
     item_txt = []
