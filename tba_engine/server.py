@@ -1,12 +1,17 @@
+import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import FileResponse
 
 from pydantic import BaseModel
+import uvicorn
 
 import src.core.multi_game_manager as game_mgr
 
-public_dir = "web_frontend/build"
+if os.path.exists("web_frontend"):
+    public_dir = "web_frontend/build"
+else:
+    public_dir = "../web_frontend/build"
 
 app = FastAPI()
 app.mount("/static",StaticFiles(directory=f"{public_dir}/static"),'static')
@@ -48,4 +53,8 @@ def root():
 @app.get("/manifest.json", include_in_schema=False)
 def root():
     return FileResponse(f'{public_dir}/manifest.json')
+
+if __name__ == "__main__":
+    print("Starting up application")
+    uvicorn.run("server:app", host="0.0.0.0", port=8000, log_level="debug")
 
