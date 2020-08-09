@@ -7,8 +7,25 @@ from src.text.textUtils import removeNewline
 colorMap = {
     'color_nar':"green",
     'color_env':"blue",
+    'color_item':"magenta",
+    'color_loc': 'red',
     'color_util':"red"
 }
+
+ansiMap = {
+    'black': '30',
+    'red': '31',
+    'green': '32',
+    'yellow': '33',
+    'blue': '34',
+    'magenta': '35',
+    'cyan': '36',
+    'white': '37',
+    'reset': '0'
+}
+
+def addColor(txt, color_name):
+    return f'\u001b[{ansiMap[color_name]}m{txt}\u001b[0m'
 
 def cPrint(color_name, txt):
     cprint(txt, color_name)
@@ -214,14 +231,42 @@ def getOption(prompt, options, default_selection = -1, numeral_color='yellow', b
         else:
             return selection
 
+def replaceWithColors(line):
+    line = replaceWithColor(line, '*', colorMap['color_nar'])
+    line = replaceWithColor(line, '@', colorMap['color_item'])
+    line = replaceWithColor(line, '^', colorMap['color_loc'])
+    line = replaceWithColor(line, '#', colorMap['color_env'])
+    return line
+
+def replaceWithColor(line, splitOn, color):
+    splits = line.split(splitOn)
+    result_list = []
+    in_color_blk = False
+    for index, split in enumerate(splits):
+        if index == 0:
+            result_list.append(split)
+        elif in_color_blk:
+            result_list.append(split)
+            in_color_blk = False
+        elif not in_color_blk:
+            result_list.append(addColor(split, color))
+            in_color_blk = True
+
+    return ''.join(result_list)
+
 def formatHtmlBlock(msg_block):
     new_txt = []
-    if isinstance(txt, list):
-        for i, line in enumerate(txt):
-            new_txt.append(removeNewline(line).replace("<br>", " \n"))
-            if i != len(txt) -1:
+    if isinstance(msg_block, list):
+        for i, line in enumerate(msg_block):
+            normal_line = removeNewline(line)
+            colored_line = replaceWithColors(normal_line)
+            new_txt.append(colored_line)
+            if i != len(msg_block) -1:
                 new_txt.append(' ')
     else:
-        new_txt.append(removeNewline(txt))
+        colored_line = replaceWithColors(
+            removeNewline(msg_block)
+        )
+        new_txt.append(colored_line)
     return new_txt
 

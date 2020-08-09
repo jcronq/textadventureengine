@@ -57,7 +57,6 @@ def getObjFileName(obj_type, game, level, obj_name):
 
 def getGameMeta(game):
     meta_file_name = getMetaFile(game)
-    print(meta_file_name)
     try:
         with open(meta_file_name, 'r') as f:
             contents = f.read()

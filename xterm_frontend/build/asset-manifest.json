@@ -1,0 +1,40 @@
+{
+  "files": {
+    "main.css": "/static/css/main.5f361e03.chunk.css",
+    "main.js": "/static/js/main.1c793f12.chunk.js",
+    "main.js.map": "/static/js/main.1c793f12.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.71c024e3.js",
+    "runtime-main.js.map": "/static/js/runtime-main.71c024e3.js.map",
+    "static/css/2.bab7986c.chunk.css": "/static/css/2.bab7986c.chunk.css",
+    "static/js/2.90f9d583.chunk.js": "/static/js/2.90f9d583.chunk.js",
+    "static/js/2.90f9d583.chunk.js.map": "/static/js/2.90f9d583.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.85437e42398db74a330b6fddc6c290e0.js": "/precache-manifest.85437e42398db74a330b6fddc6c290e0.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.bab7986c.chunk.css.map": "/static/css/2.bab7986c.chunk.css.map",
+    "static/css/main.5f361e03.chunk.css.map": "/static/css/main.5f361e03.chunk.css.map",
+    "static/js/2.90f9d583.chunk.js.LICENSE.txt": "/static/js/2.90f9d583.chunk.js.LICENSE.txt",
+    "static/media/SearchHelper.js.map": "/static/media/SearchHelper.js.5c64cc87.map",
+    "static/media/attach.js.map": "/static/media/attach.js.3bb6e18b.map",
+    "static/media/attach.test.js.map": "/static/media/attach.test.js.50968abd.map",
+    "static/media/fit.js.map": "/static/media/fit.js.e8ce737d.map",
+    "static/media/fit.test.js.map": "/static/media/fit.test.js.558768ae.map",
+    "static/media/fullscreen.js.map": "/static/media/fullscreen.js.bc6e3156.map",
+    "static/media/fullscreen.test.js.map": "/static/media/fullscreen.test.js.84e57f27.map",
+    "static/media/pty.node": "/static/media/pty.d5dcc09a.node",
+    "static/media/search.js.map": "/static/media/search.js.83f55f33.map",
+    "static/media/terminado.js.map": "/static/media/terminado.js.5b917dff.map",
+    "static/media/terminado.test.js.map": "/static/media/terminado.test.js.235bc551.map",
+    "static/media/winptyCompat.js.map": "/static/media/winptyCompat.js.4ec3dd4c.map",
+    "static/media/winptyCompat.test.js.map": "/static/media/winptyCompat.test.js.854260a1.map",
+    "static/media/zmodem.js.map": "/static/media/zmodem.js.eb95ef74.map",
+    "static/media/zmodem.test.js.map": "/static/media/zmodem.test.js.09e671a4.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.71c024e3.js",
+    "static/css/2.bab7986c.chunk.css",
+    "static/js/2.90f9d583.chunk.js",
+    "static/css/main.5f361e03.chunk.css",
+    "static/js/main.1c793f12.chunk.js"
+  ]
+}

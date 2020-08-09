@@ -6,7 +6,13 @@ import queue
 
 PLAYER_LOCATION = 'player.location'
 ITEM_ROOT = 'items'
+LOCATION_ROOT = 'locations'
 PLAYER_NAME = 'player.name'
+
+obj_roots = {
+    'item': ITEM_ROOT,
+    'location': LOCATION_ROOT,
+}
 
 def itemInLocation(game, test_location, item):
     location = game.getItemLocation(item.name)
@@ -23,7 +29,6 @@ class Game:
             self.locations[location.name.lower()] = location
         for item in items:
             self.items[item.name.lower()] = item
-            print(item.name, item.start_location)
             self.setItemLocation(item.name, item.start_location)
         self.setPlayerLocation(start_location)
 
@@ -34,6 +39,8 @@ class Game:
         return result
 
     def report(self, reportable):
+        if reportable is None:
+            return
         if isinstance(reportable, str):
             self.text_buffer.put(reportable)
         elif isinstance(reportable, list):
@@ -63,11 +70,20 @@ class Game:
 
     def getRoomContents(self):
         room_name = self.getPlayerLocation().name
-        print('room', room_name)
         filter_func = partial(itemInLocation, self, room_name)
         if len(self.locations) <= 0:
             return []
         return list(filter(filter_func, self.items.values()))
+
+    def getBlockerClearStatus(self, loc_name, path):
+        root = self.getObjectRoot('item')
+        state = f'{root}.{loc_name}.connections.{path}.block_cleared'
+        self.getState(state, False)
+
+    def setBlockerClearStatus(self, loc_name, path):
+        root = self.getObjectRoot('item')
+        state = f'{root}.{loc_name}.connections.{path}.block_cleared'
+        self.setState(state, True)
 
     def getPlayerLocation(self):
         """Returns the Location() object of current room"""
@@ -75,6 +91,7 @@ class Game:
         return self.getLocation(player_location_name)
 
     def setPlayerLocation(self, new_location):
+        self.setState(f"location.{new_location}.visited", True)
         self.setState(PLAYER_LOCATION, new_location)
 
     def getLocation(self, location_name, default=None):
@@ -90,6 +107,12 @@ class Game:
             return []
         return list(filter(filter_func, self.items.values()))
 
+    def getObjectRoot(self, obj_type):
+        obj_root = obj_roots.get(obj_type, None)
+        if obj_root is None:
+            self.report(f"obj_type {obj_root} is missing its state root defined in game.py")
+        return obj_root
+
     def getStateName_ItemLocation(self, item_name):
         return f'{ITEM_ROOT}.{item_name}.location'
 
@@ -100,6 +123,18 @@ class Game:
     def setItemLocation(self, item_name, location):
         state_name = self.getStateName_ItemLocation(item_name.lower())
         self.stateManager.setState(state_name, location)
+
+    def setExamined(self, obj_name, obj_type):
+        obj_root = self.getObjectRoot(obj_type)
+
+        state_name = f'{obj_root}.{obj_name}.examined'
+        self.stateManager.setState(state_name, True)
+
+    def getExamined(self, obj_name, obj_type):
+        obj_root = getObjectRoot(obj_type)
+
+        state_name = f'{obj_root}.{obj_name}.examined'
+        return self.stateManager.getState(state_name, False)
 
     def hasItem(self, item_name):
         return item_name.lower() in self.items

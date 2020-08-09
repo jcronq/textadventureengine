@@ -20,6 +20,7 @@ class Location:
         self.connections = {}
         self.travel_descriptions = {}
         self.blockades = {}
+        self.examine_text = None
 
     def addConnection(self, direction, location,
                             travel_description={},
@@ -39,6 +40,9 @@ class Location:
                     'to':travel_blockade.get('from', None),
                     'from':travel_blockade.get('to', None)
             })
+
+    def hasPath(self, path):
+        return path.lower() in self.connections.keys()
 
     def examine(self):
         locations = "<br>- ".join(["Locations:"]+list(self.connections.keys()))

@@ -1,16 +1,22 @@
+import src.text.messages as messageTxt
+import src.text.describe as describe
+
 def drop(game, args):
     obj_to_drop = args.get('item', None)
+
+    # Drop item not specified
     if obj_to_drop is None:
-        game.report("I don't understand what you want me to drop.")
+        game.report(messageTxt.malformed_drop_request)
         return
+
     inventory_contents = [item.name.lower() for item in
                           game.getInventoryContents()]
+
+    # Item no in inventory
     if obj_to_drop.lower() not in inventory_contents:
-        game.report(f"I don't have a *{obj_to_drop}* in my inventory.")
+        game.report(messageTxt.itemNotInInventory(obj_to_drop))
     else:
+        drop_obj = game.getItem(obj_to_drop)
         game.dropItem(obj_to_drop)
-        item = game.getItem(obj_to_drop)
-        drop_txt = []
-        drop_txt += [item.drop_text]
-        drop_txt += [f"{obj_to_drop} *dropped*"]
-        game.report(drop_txt)
+        game.report(describe.drop(drop_obj))
+

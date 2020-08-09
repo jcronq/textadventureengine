@@ -42,7 +42,7 @@ class Engine:
             if debug:
                 txt.utilPrint(f"Calling: {command_obj['intent']}(game, {command_obj['args']})")
             command(self.game, command_obj['args'])
-            return self.game.getText()
+            return game_printer(self.game.getText())
         else:
             return [f"Unknown command: {command_obj['intent']}"]
 

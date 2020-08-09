@@ -1,5 +1,5 @@
 import React from 'react';
-import GameTerminal from './components/gameTerminal';
+import GameTerminal from './components/xTerminal';
 
 export default function App() {
   return (

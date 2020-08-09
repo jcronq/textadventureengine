@@ -8,10 +8,11 @@ import uvicorn
 
 import src.core.multi_game_manager as game_mgr
 
-if os.path.exists("web_frontend"):
-    public_dir = "web_frontend/build"
+frontend = "xterm";
+if os.path.exists(f"{frontend}_frontend"):
+    public_dir = f"{frontend}_frontend/build"
 else:
-    public_dir = "../web_frontend/build"
+    public_dir = f"../{frontend}_frontend/build"
 
 app = FastAPI()
 app.mount("/static",StaticFiles(directory=f"{public_dir}/static"),'static')
@@ -53,6 +54,10 @@ def root():
 @app.get("/manifest.json", include_in_schema=False)
 def root():
     return FileResponse(f'{public_dir}/manifest.json')
+
+@app.get("/logo192.png", include_in_schema=False)
+def root():
+    return FileResponse(f'{public_dir}/logo192.png')
 
 if __name__ == "__main__":
     print("Starting up application")
