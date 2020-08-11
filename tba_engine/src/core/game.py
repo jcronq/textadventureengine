@@ -56,10 +56,14 @@ class Game:
         self.stateManager.overrideStates(state)
 
     def getState(self, location, default=None):
-        return self.stateManager.getState(location)
+        return self.stateManager.getState(location, default)
 
     def setState(self, location, value):
         self.stateManager.setState(location, value)
+
+    def inConversation(self):
+        state = 'player.is_conversing'
+        return self.getState(state, False)
 
     def getInventoryContents(self):
         player_name = self.getState(PLAYER_NAME)

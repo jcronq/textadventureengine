@@ -2,6 +2,8 @@ nowhere_to_go = "*There's nowhere to go! I think I'm stuck...*"
 
 malformed_take_request = "*I don't know what you want me to take.*"
 
+malformed_talk_request = "*You want me to talk to who?*"
+
 malformed_drop_request = "*I don't know what you want me to drop.*"
 
 malformed_move_request = "*I don't understand where you want me to go.*"

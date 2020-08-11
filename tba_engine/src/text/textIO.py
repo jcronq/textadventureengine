@@ -270,3 +270,28 @@ def formatHtmlBlock(msg_block):
         new_txt.append(colored_line)
     return new_txt
 
+def promptInput(prompt, options):
+    print(prompt)
+
+    legal_keys = [option['key'] for option in options] + ['quit']
+
+    opt_text = '<br>'.join(formatHtmlBlock("  ".join([
+        f"#{option['key']}#: *{option['text']}*"
+        for option in options
+    ])))
+    print(opt_text.replace('<br>', '\n'))
+
+    cmd = ['']
+    while cmd[0] not in legal_keys:
+        try:
+            cmd = input("> ").strip().split(' ')
+            if cmd[0] == 'quit':
+                return ['quit']
+            elif cmd[0] not in legal_keys:
+                print(f"Please select option from {legal_keys}")
+                cmd = ['']
+        except:
+            cmd = ['']
+
+    return cmd
+

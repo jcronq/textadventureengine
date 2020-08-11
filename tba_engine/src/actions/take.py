@@ -1,4 +1,4 @@
-from src.core.actions.help import actionHelp
+from src.actions.help import actionHelp
 import src.text.messages as messageTxt
 import src.text.describe as describe
 

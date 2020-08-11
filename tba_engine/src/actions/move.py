@@ -1,5 +1,5 @@
-from src.core.actions.examine import examine
-from src.core.actions.help import actionHelp
+from src.actions.examine import examine
+from src.actions.help import actionHelp
 from src.core.stateManager import StateManager
 import src.text.messages as messageTxt
 import src.text.describe as describe

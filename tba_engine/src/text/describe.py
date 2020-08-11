@@ -1,4 +1,5 @@
 import src.text.messages as messages
+import src.text.textUtils as util
 
 def take(item_obj):
     if item_obj.take_text is not None:
@@ -58,4 +59,20 @@ def location(loc_obj):
 def inventory(inventory_contents):
     item_description = [item(item_obj) for item_obj in inventory_contents]
     return "#Inventory Contents#:<br>- "+"<br>- ".join(item_description)
+
+def conversationMessage(char_name, prompt, options):
+    opt_prints = [
+        f"#{index}#: *{option['txt']}*"
+        for index, option in enumerate(options)
+    ]
+    optjoiner = "<br>  "
+    parajoiner = "<br>"
+    opt_print = "  "+optjoiner.join(opt_prints)
+    name = util.properNoun(char_name)
+
+    conversation = [
+        f"#{name}#: ^{prompt}^",
+        opt_print
+    ]
+    return parajoiner.join(conversation)
 

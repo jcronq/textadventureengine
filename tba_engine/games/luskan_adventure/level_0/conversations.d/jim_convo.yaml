@@ -1,0 +1,93 @@
+config:
+  conversation:
+    0a964acc-ac9d-4fab-b4bb-e8c60203d495:
+      opt: []
+      parent: d5740430-9a46-462a-92de-8b86f580c54b
+      type: player-opt
+      uid: 0a964acc-ac9d-4fab-b4bb-e8c60203d495
+    142415ca-8dec-44b9-a409-f10bc73e096a:
+      opt:
+      - next: 29f13ac7-fffa-495c-a6b8-66f997076d42
+        txt: How about the weather?
+      - next: e29e1920-3e30-483a-80aa-4f1d358057f4
+        txt: Idk, I didn't think that far ahead.
+      - next: d5740430-9a46-462a-92de-8b86f580c54b
+        txt: Do you know the tragedy of darth plagueis the wise?
+      parent: af96ad97-6883-49e6-958b-2af16afd04ae
+      type: player-opt
+      uid: 142415ca-8dec-44b9-a409-f10bc73e096a
+    29f13ac7-fffa-495c-a6b8-66f997076d42:
+      next: 4d0324c2-7f2b-47a3-9f08-4874cdd4aebe
+      parent: 142415ca-8dec-44b9-a409-f10bc73e096a
+      txt: Isn't it Hot!
+      type: npc
+      uid: 29f13ac7-fffa-495c-a6b8-66f997076d42
+    312fff39-20fa-40ef-ba00-7181789206c1:
+      next: eec2ee36-887e-49a6-961a-408ab8b6ed72
+      parent: null
+      txt: hi
+      type: npc
+      uid: 312fff39-20fa-40ef-ba00-7181789206c1
+    3781ecde-4b7b-4f57-982f-3ed45080235f:
+      next: f53a7d33-5a27-4fc5-be97-39882a3313ab
+      parent: 5aaf34af-8949-4fd3-8d6b-d4eaa45072e7
+      txt: meow
+      type: npc
+      uid: 3781ecde-4b7b-4f57-982f-3ed45080235f
+    4d0324c2-7f2b-47a3-9f08-4874cdd4aebe:
+      opt:
+      - next: f7c8fede-3a62-4d60-a517-2b6c43c122c3
+        txt: Exactly what I was going to say
+      parent: 29f13ac7-fffa-495c-a6b8-66f997076d42
+      type: player-opt
+      uid: 4d0324c2-7f2b-47a3-9f08-4874cdd4aebe
+    5aaf34af-8949-4fd3-8d6b-d4eaa45072e7:
+      opt:
+      - next: 3781ecde-4b7b-4f57-982f-3ed45080235f
+        txt: cat got your tongue?
+      parent: f7c8fede-3a62-4d60-a517-2b6c43c122c3
+      type: player-opt
+      uid: 5aaf34af-8949-4fd3-8d6b-d4eaa45072e7
+    af96ad97-6883-49e6-958b-2af16afd04ae:
+      next: 142415ca-8dec-44b9-a409-f10bc73e096a
+      parent: eec2ee36-887e-49a6-961a-408ab8b6ed72
+      txt: Great, what do you want to talk about?
+      type: npc
+      uid: af96ad97-6883-49e6-958b-2af16afd04ae
+    d5740430-9a46-462a-92de-8b86f580c54b:
+      next: 0a964acc-ac9d-4fab-b4bb-e8c60203d495
+      parent: 142415ca-8dec-44b9-a409-f10bc73e096a
+      txt: It's not a story the Jedi would tell you.
+      type: npc
+      uid: d5740430-9a46-462a-92de-8b86f580c54b
+    dc539ba9-d5bf-4761-ba21-49de4baed527:
+      opt: []
+      parent: e29e1920-3e30-483a-80aa-4f1d358057f4
+      type: player-opt
+      uid: dc539ba9-d5bf-4761-ba21-49de4baed527
+    e29e1920-3e30-483a-80aa-4f1d358057f4:
+      next: dc539ba9-d5bf-4761-ba21-49de4baed527
+      parent: 142415ca-8dec-44b9-a409-f10bc73e096a
+      txt: ok...
+      type: npc
+      uid: e29e1920-3e30-483a-80aa-4f1d358057f4
+    eec2ee36-887e-49a6-961a-408ab8b6ed72:
+      opt:
+      - next: af96ad97-6883-49e6-958b-2af16afd04ae
+        txt: I wish to engage you in idle conversation.
+      parent: 312fff39-20fa-40ef-ba00-7181789206c1
+      type: player-opt
+      uid: eec2ee36-887e-49a6-961a-408ab8b6ed72
+    f53a7d33-5a27-4fc5-be97-39882a3313ab:
+      opt: []
+      parent: 3781ecde-4b7b-4f57-982f-3ed45080235f
+      type: player-opt
+      uid: f53a7d33-5a27-4fc5-be97-39882a3313ab
+    f7c8fede-3a62-4d60-a517-2b6c43c122c3:
+      next: 5aaf34af-8949-4fd3-8d6b-d4eaa45072e7
+      parent: 4d0324c2-7f2b-47a3-9f08-4874cdd4aebe
+      txt: '...'
+      type: npc
+      uid: f7c8fede-3a62-4d60-a517-2b6c43c122c3
+  initial_msg: 312fff39-20fa-40ef-ba00-7181789206c1
+  name: jim

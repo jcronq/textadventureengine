@@ -1,4 +1,4 @@
-from src.core.components.location import Location
+from src.components.location import Location
 
 def locationLoader(location_data):
     uniq_name      = location_data['uniq_name']

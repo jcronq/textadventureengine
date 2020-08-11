@@ -1,10 +1,10 @@
 import src.text.textIO as txt
 
-from src.core.actions.move import move
-from src.core.actions.take import take
-from src.core.actions.examine import examine
-from src.core.actions.inventory import inventory
-from src.core.actions.drop import drop
+from src.actions.move import move
+from src.actions.take import take
+from src.actions.examine import examine
+from src.actions.inventory import inventory
+from src.actions.drop import drop
 
 GAME_RUNNING = True
 
@@ -23,9 +23,9 @@ command_handlers = {
     "examine": examine,
     "inventory": inventory,
     "drop": drop,
+    "talk": talk,
     "print": printCommand,
     "quit": quitGame,
-
 }
 
 class Engine:
@@ -34,7 +34,16 @@ class Engine:
         self.parser = parser
 
     def update(self, game_printer, in_str, debug=False):
-        command_obj = self.parser.parse_command(in_str)
+        if self.game.inConversation():
+            command_obj = {
+                'intent': 'talk',
+                'args': {
+                    'character': self.game.getConversingNPC(),
+                    'selection': self.parser.parseConvoInput(in_str),
+                }
+            }
+        else:
+            command_obj = self.parser.parse_command(in_str)
         if debug:
             txt.utilPrint(f"State: {self.game.getFullState()}")
         command = command_handlers.get(command_obj['intent'], None)
@@ -53,16 +62,6 @@ class Engine:
         game_printer(self.game.getText())
         while GAME_RUNNING:
             in_str = txt.getInput()
-            command_obj = self.parser.parse_command(in_str)
-            if debug:
-                txt.utilPrint(f"State: {self.game.getFullState()}")
-            command = command_handlers.get(command_obj['intent'], None)
-            if command is not None:
-                if debug:
-                    txt.utilPrint(f"Calling: {command_obj['intent']}(game, {command_obj['args']})")
-                command(self.game, command_obj['args'])
-                game_printer(self.game.getText())
-            else:
-                txt.utilPrint(f"Unknown command: {command_obj['intent']}")
+            self.update(game_printer, in_str, debug)
         txt.utilPrint(f"Exiting game.")
 

@@ -1,0 +1,12 @@
+config:
+    name: Grand Magus
+    conversation:
+        init:
+            type: 'npc'
+            msg: 'Hello'
+            next: 'charOpts'
+        charOpts:
+            type: 'player-opt'
+            opt: 
+                - msg: 'Who are you'
+                  next: ''

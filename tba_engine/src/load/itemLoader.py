@@ -1,4 +1,4 @@
-from src.core.components.item import Item
+from src.components.item import Item
 
 def itemLoader(item):
     name           = item['name']

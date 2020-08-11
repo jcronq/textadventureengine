@@ -51,6 +51,9 @@ def getLocations(game, level):
 def getItems(game, level):
     return getGameObjects('items', game, level)
 
+def getConversations(game, level):
+    return getGameObjects('conversations', game, level)
+
 def getObjFileName(obj_type, game, level, obj_name):
     file_name = f"{getObjRoot(obj_type, game, level)}/{obj_name.replace(' ','_')}.yaml"
     return file_name
@@ -64,6 +67,11 @@ def getGameMeta(game):
             return game_meta
     except:
         return None
+
+def saveGameObj(obj_type, game, level, obj_name, obj):
+    root = getObjRoot(obj_type, game, level)
+    with open(f'{root}/{obj_name}.yaml', 'w') as f:
+        f.write(yaml.dump(obj))
 
 def loadConfig(obj_type, game, level, obj_name):
     normal_flat_name = obj_name.replace(' ', '_').lower()
@@ -109,6 +117,21 @@ def chooseUniqueName(obj_type, game, level):
     while item_uniq_name.lower().replace('_', ' ') in existing_names:
         item_uniq_name = txt.getStr(f"{item_uniq_name} is already taken. Please choose another\nUnique Name")
     return item_uniq_name
+
+def chooseUniqueName(obj_type, game, level):
+    existing_objs = getGameObjects(obj_type, game, level)
+    existing_names = [obj.replace('_', ' ').lower() for obj in existing_objs]
+    prompt = "Coose a file to load"
+    options = [f"Create New {obj_type}"] + existing_names
+    choice = txt.getOption(prompt, options)
+    if choice != 0:
+        choice -= 1
+        return existing_objs[choice]
+    else:
+        item_uniq_name = txt.getStr("Unique Name")
+        while item_uniq_name.lower().replace('_', ' ') in existing_names:
+            item_uniq_name = txt.getStr(f"{item_uniq_name} is already taken. Please choose another\nUnique Name")
+        return item_uniq_name.lower().replace(' ', '_')
 
 def chooseStartingLocation(game, level):
     prompt = "Choose a Starting Location"
