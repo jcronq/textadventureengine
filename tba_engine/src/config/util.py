@@ -54,6 +54,9 @@ def getItems(game, level):
 def getConversations(game, level):
     return getGameObjects('conversations', game, level)
 
+def getCharacters(game, level):
+    return getGameObjects('characters', game, level)
+
 def getObjFileName(obj_type, game, level, obj_name):
     file_name = f"{getObjRoot(obj_type, game, level)}/{obj_name.replace(' ','_')}.yaml"
     return file_name

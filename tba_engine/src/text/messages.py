@@ -8,6 +8,10 @@ malformed_drop_request = "*I don't know what you want me to drop.*"
 
 malformed_move_request = "*I don't understand where you want me to go.*"
 
+malformed_talk_request = "*I don't understand who you want me to talk to.*"
+
+empty_convo_selection = "Invalid selection"
+
 def missingObj(obj_name):
     return f"*Hmm... Nope, I don't see any* @{obj_name}@ *here.*"
 
@@ -45,4 +49,10 @@ def pathName(path):
 
 def invalidPath(path):
     return f"*I can't find a way* ^{pathName(path)}^*.*"
+
+def characterNotFound(character_name):
+    return f"*I don't see* {character_name} *here*"
+
+def characterNotHere(character_name):
+    return f"{character_name} *isn't here*"
 

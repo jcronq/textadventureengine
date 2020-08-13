@@ -6,6 +6,7 @@ import json
 
 from src.load.itemLoader import itemLoader
 from src.load.locationLoader import locationLoader
+from src.load.characterLoader import locationLoader
 from src.load.connectionLoader import connectionLoader
 
 from src.core.game import Game
@@ -14,6 +15,7 @@ import src.config.util as util
 obj_loaders = {
     "items": itemLoader,
     "locations": locationLoader,
+    "characters": characterLoader,
 }
 
 class GameLoader:
@@ -36,7 +38,8 @@ class GameLoader:
         for level in self.levels:
             self.objects[level] = {
                 'items': util.getItems(game, level),
-                'locations': util.getLocations(game, level)
+                'locations': util.getLocations(game, level),
+                'characters': util.getCharacters(game, level),
             }
 
         self.configs = {}

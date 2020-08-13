@@ -7,11 +7,13 @@ import queue
 PLAYER_LOCATION = 'player.location'
 ITEM_ROOT = 'items'
 LOCATION_ROOT = 'locations'
+CHARACTER_ROOT = 'characters'
 PLAYER_NAME = 'player.name'
 
 obj_roots = {
     'item': ITEM_ROOT,
     'location': LOCATION_ROOT,
+    'character': CHARACTER_ROOT,
 }
 
 def itemInLocation(game, test_location, item):
@@ -65,6 +67,18 @@ class Game:
         state = 'player.is_conversing'
         return self.getState(state, False)
 
+    def setInConversation(self, conversing):
+        state = 'player.is_conversing'
+        return self.setState(state, conversing)
+
+    def setConversationRef(self, character, convo_ref):
+        state = "player.conversation_ref"
+        self.setState(state, convo_ref)
+
+    def getConversationRef(self):
+        state = "player.conversation_ref"
+        self.setState(state, convo_ref)
+
     def getInventoryContents(self):
         player_name = self.getState(PLAYER_NAME)
         filter_func = partial(itemInLocation, self, f'inventory.{player_name}')
@@ -105,6 +119,9 @@ class Game:
     def getItem(self, item_name, default=None):
         return self.items.get(item_name.lower(), default)
 
+    def getCharacter(self, char_name, default=None):
+        return self.characters.get(char_name.lower(), default)
+
     def getItemsInLocation(self, test_location):
         filter_func = partial(itemInLocation, self, test_location)
         if len(self.items) <= 0:
@@ -120,8 +137,16 @@ class Game:
     def getStateName_ItemLocation(self, item_name):
         return f'{ITEM_ROOT}.{item_name}.location'
 
+    def getStateName_ObjLocation(self, obj_type, obj_name):
+        obj_root = getObjectRoot(obj_type)
+        return f'{obj_root}.{obj_name}.location'
+
     def getItemLocation(self, item_name):
         state_name = self.getStateName_ItemLocation(item_name.lower())
+        return self.stateManager.getState(state_name, None)
+
+    def getCharacterLocation(self, char_name):
+        state_name = self.getStateName_ObjLocation('character', char_name.lower())
         return self.stateManager.getState(state_name, None)
 
     def setItemLocation(self, item_name, location):
