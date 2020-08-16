@@ -1,8 +1,12 @@
 import src.text.messages as messageTxt
-#TODO add conditions
+
+import src.text.describe as describe
+
 def converse(game, args):
     character = args.get('character', None)
     selection = args.get('selection', None)
+
+
 
     if character is None and selection is None:
         game.report(messageTxt.malformed_talk_request)
@@ -18,7 +22,7 @@ def converse(game, args):
                 game.report(messageTxt.characterNotFound(character))
                 return
 
-            char_location = game.getCharacterLocation(character).name
+            char_location = game.getCharacterLocation(character)
             player_location = game.getPlayerLocation().name
             if char_location != player_location:
                 game.report(messageTxt.characterNotHere(character))
@@ -34,7 +38,12 @@ def converse(game, args):
         if selection is None:
             game.report(messageTxt.empty_convo_selection)
             return
-        conv_obj = char_obj.converse(game.getConversationRef(), selection)
+        if not selection.isnumeric() or "." in selection:
+            game.report(messageTxt.non_numeric_selection)
+            return
+
+        char_obj = game.getCharacter(character)
+        conv_obj = char_obj.converse(game.getConversationRef(), int(selection))
 
     game.setConversationRef(character, conv_obj['ref'])
     game.report(
@@ -44,6 +53,6 @@ def converse(game, args):
             conv_obj['opts']['opt'],
         )
     )
-    if conv_obj['ref'] is None:
+    if conv_obj['end']:
         game.setInConversation(False)
 

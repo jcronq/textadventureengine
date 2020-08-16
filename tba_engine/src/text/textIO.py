@@ -214,7 +214,7 @@ def getOption(prompt, options, default_selection = -1, numeral_color='yellow', b
     while selection < 0:
         try:
             user_input = input("> ").strip()
-            if user_input == 'quit':
+            if user_input == 'quit' or user_input == ':q':
                 return 'quit'
             elif user_input == '' and default_selection >= 0:
                 return default_selection

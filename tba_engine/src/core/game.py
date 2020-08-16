@@ -20,18 +20,26 @@ def itemInLocation(game, test_location, item):
     location = game.getItemLocation(item.name)
     return test_location.lower() in location.lower()
 
+def charInLocation(game, test_location, char):
+    location = game.getCharacterLocation(char.name)
+    return test_location.lower() in location.lower()
+
 class Game:
     stateManager = StateManager()
     locations = {}
     items = {}
+    characters = {}
     text_buffer = queue.Queue()
 
-    def __init__(self, start_location, locations, items):
+    def __init__(self, start_location, locations, items, characters):
         for location in locations:
             self.locations[location.name.lower()] = location
         for item in items:
             self.items[item.name.lower()] = item
             self.setItemLocation(item.name, item.start_location)
+        for char in characters:
+            self.characters[char.name.lower()] = char
+            self.setCharacterLocation(char.name, char.start_location)
         self.setPlayerLocation(start_location)
 
     def getText(self):
@@ -71,13 +79,17 @@ class Game:
         state = 'player.is_conversing'
         return self.setState(state, conversing)
 
+    def getConversingNPC(self):
+        return self.getState("player.conversing_npc", None)
+
     def setConversationRef(self, character, convo_ref):
         state = "player.conversation_ref"
+        self.setState("player.conversing_npc", character)
         self.setState(state, convo_ref)
 
     def getConversationRef(self):
         state = "player.conversation_ref"
-        self.setState(state, convo_ref)
+        return self.getState(state, None)
 
     def getInventoryContents(self):
         player_name = self.getState(PLAYER_NAME)
@@ -120,6 +132,7 @@ class Game:
         return self.items.get(item_name.lower(), default)
 
     def getCharacter(self, char_name, default=None):
+        breakpoint()
         return self.characters.get(char_name.lower(), default)
 
     def getItemsInLocation(self, test_location):
@@ -127,6 +140,12 @@ class Game:
         if len(self.items) <= 0:
             return []
         return list(filter(filter_func, self.items.values()))
+
+    def getCharactersInLocation(self, test_location):
+        filter_func = partial(charInLocation, self, test_location)
+        if len(self.characters) <= 0:
+            return []
+        return list(filter(filter_func, self.characters.values()))
 
     def getObjectRoot(self, obj_type):
         obj_root = obj_roots.get(obj_type, None)
@@ -138,7 +157,7 @@ class Game:
         return f'{ITEM_ROOT}.{item_name}.location'
 
     def getStateName_ObjLocation(self, obj_type, obj_name):
-        obj_root = getObjectRoot(obj_type)
+        obj_root = self.getObjectRoot(obj_type)
         return f'{obj_root}.{obj_name}.location'
 
     def getItemLocation(self, item_name):
@@ -148,6 +167,10 @@ class Game:
     def getCharacterLocation(self, char_name):
         state_name = self.getStateName_ObjLocation('character', char_name.lower())
         return self.stateManager.getState(state_name, None)
+
+    def setCharacterLocation(self, char_name, location):
+        state_name = self.getStateName_ObjLocation('character', char_name.lower())
+        self.stateManager.setState(state_name, location)
 
     def setItemLocation(self, item_name, location):
         state_name = self.getStateName_ItemLocation(item_name.lower())
@@ -182,7 +205,7 @@ class Game:
         self.stateManager.setState(location_state_name, current_room)
 
     def getCharacter(self, character_name):
-        return self.items.get(character_name.lower(), None)
+        return self.characters.get(character_name.lower(), None)
 
     def getFullState(self):
         return copy.deepcopy(self.stateManager.state)

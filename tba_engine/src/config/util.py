@@ -1,6 +1,7 @@
 import sys
 import yaml
 import os
+import re
 
 import src.text.textIO as txt
 import src.text.textUtils as txtUtil
@@ -8,6 +9,13 @@ import src.text.textUtils as txtUtil
 GAMES_ROOT = './games'
 
 NONE_FILTER = lambda x: x is not None
+
+OBJ_TYPES = [
+    'items',
+    'characters',
+    'locations',
+    'conversations',
+]
 
 def flatten(list_of_lists):
     flat_list = []
@@ -71,23 +79,84 @@ def getGameMeta(game):
     except:
         return None
 
+def getGameStartLocation(game):
+    try:
+        meta = getGameMeta(game)
+        start_location = extractReference(meta['initial_condition']['start_location'])
+        return start_location[-1]
+    except:
+        return None
+
+def getKeyEditOptions(game_obj):
+    options = [{'key': opt, 'text': ''} for opt in game_obj.keys()]
+    options.append({'key': ':q', 'text': ''})
+    return options
+
+def extractReference(raw_ref):
+    ref_array = extractReferenceToArray(raw_ref)
+    return {
+        'level': ref_array[0],
+        'obj_type': ref_array[1],
+        'obj_name': ref_array[2],
+    }
+
+def extractReferenceToArray(raw_ref):
+    ref_regex = re.compile(r'<(.+)>')
+    matches = ref_regex.findall(raw_ref)
+    if len(matches) == 0:
+        return []
+    else:
+        return matches[0].split('.')
+
+def removeGameObj(obj_type, game, level, obj_name, obj):
+    obj_name = obj_name.replace(' ', '_')
+    root = getObjRoot(obj_type, game, level)
+    os.remove(f'{root}/{obj_name}.yaml')
+
+def saveGameObjToRef(game, ref, obj):
+    ref_obj = extractReference(ref)
+    saveGameObj(ref_obj['obj_type'], game, ref_obj['level'], ref_obj['obj_name'], obj)
+
 def saveGameObj(obj_type, game, level, obj_name, obj):
+    obj_name = obj_name.replace(' ', '_').lower()
     root = getObjRoot(obj_type, game, level)
     with open(f'{root}/{obj_name}.yaml', 'w') as f:
         f.write(yaml.dump(obj))
 
+def loadConfigFromRef(game, obj_ref):
+    obj_parts = extractReference(obj_ref)
+    return loadConfig(obj_parts['obj_type'], game, obj_parts['level'],
+                      obj_parts['obj_name'])
+
 def loadConfig(obj_type, game, level, obj_name):
-    normal_flat_name = obj_name.replace(' ', '_').lower()
-    file_name = getObjFileName(obj_type, game, level, obj_name)
+    flat_name = obj_name.replace(' ', '_').lower()
+    file_name = getObjFileName(obj_type, game, level, flat_name)
+    print(file_name)
     try:
         with open(file_name, 'r') as f:
             content = f.read()
-            obj = yaml.full_load(content)
-            conf = obj['config']
+            # obj = yaml.full_load(content)
+            conf = yaml.full_load(content)
+            # conf = obj['config']
             conf['uniq_name'] = obj_name
             return conf
     except:
         return None
+
+def loadConfigList(obj_type, game, level, obj_list):
+    return dict([(obj_name, loadConfig(obj_type, game, level, obj_name))
+        for obj_name in obj_list])
+
+def loadLevelConfigs(game, level):
+    obj_names = dict([
+        (obj_type, getGameObjects(obj_type, game, level))
+        for obj_type in OBJ_TYPES
+    ])
+    obj_configs = dict([
+        (obj_type, loadConfigList(obj_type, game, level, obj_list))
+        for obj_type, obj_list in obj_names.items()
+    ])
+    return obj_configs
 
 def getContainers(game, level):
     items = getItems(game, level)
@@ -100,18 +169,49 @@ def getContainers(game, level):
     containers = flatten(containers_stack)
     return(containers)
 
+def makeGame():
+    game_name = txt.getStr("Name of the Game?")
+    game_root = getGameRoot(game_name.replace(' ', '_'))
+    if not os.path.exists(game_root):
+        os.mkdir(game_root)
+    return game_name
+
+def makeLevel(game):
+    level = txt.getStr("Name of the Level?")
+    level_root = getLevelRoot(game, level.replace(' ', '_'))
+    if not os.path.exists(level_root):
+        os.mkdir(level_root)
+    game_dirs = [
+        getObjRoot('conversations', game, level),
+        getObjRoot('items', game, level),
+        getObjRoot('locations', game, level),
+        getObjRoot('characters', game, level)
+    ]
+    for directory in game_dirs:
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+    return level
+
 def chooseGame():
     games = getGames()
     prompt = "Choose a game"
     options = [txtUtil.properNoun(game.replace('_', ' ')) for game in games]
+    options += ["New Game"]
     choice = txt.getOption(prompt, options)
-    return games[choice]
+    if choice < len(games):
+        return games[choice]
+    else:
+        return makeGame()
 
 def chooseLevel(game):
     levels = getLevels(game)
     prompt = "Choose Level"
-    choice = txt.getOption(prompt, levels)
-    return levels[choice]
+    options = levels + ["New Level"]
+    choice = txt.getOption(prompt, options)
+    if choice < len(levels):
+        return levels[choice]
+    else:
+        return makeLevel(game)
 
 def chooseUniqueName(obj_type, game, level):
     existing_objs = getGameObjects(obj_type, game, level)
@@ -121,27 +221,27 @@ def chooseUniqueName(obj_type, game, level):
         item_uniq_name = txt.getStr(f"{item_uniq_name} is already taken. Please choose another\nUnique Name")
     return item_uniq_name
 
-def chooseUniqueName(obj_type, game, level):
-    existing_objs = getGameObjects(obj_type, game, level)
-    existing_names = [obj.replace('_', ' ').lower() for obj in existing_objs]
-    prompt = "Coose a file to load"
-    options = [f"Create New {obj_type}"] + existing_names
-    choice = txt.getOption(prompt, options)
-    if choice != 0:
-        choice -= 1
-        return existing_objs[choice]
-    else:
-        item_uniq_name = txt.getStr("Unique Name")
-        while item_uniq_name.lower().replace('_', ' ') in existing_names:
-            item_uniq_name = txt.getStr(f"{item_uniq_name} is already taken. Please choose another\nUnique Name")
-        return item_uniq_name.lower().replace(' ', '_')
+# def chooseUniqueName(obj_type, game, level):
+#     existing_objs = getGameObjects(obj_type, game, level)
+#     existing_names = [obj.replace('_', ' ').lower() for obj in existing_objs]
+#     prompt = "Choose a file to load"
+#     options = [f"Create New {obj_type}"] + existing_names
+#     choice = txt.getOption(prompt, options)
+#     if choice != 0:
+#         choice -= 1
+#         return existing_objs[choice]
+#     else:
+#         item_uniq_name = txt.getStr("Unique Name")
+#         while item_uniq_name.lower().replace('_', ' ') in existing_names:
+#             item_uniq_name = txt.getStr(f"{item_uniq_name} is already taken. Please choose another\nUnique Name")
+#         return item_uniq_name.lower().replace(' ', '_')
 
 def chooseStartingLocation(game, level):
     prompt = "Choose a Starting Location"
     existing_locations = getLocations(game, level)
     options = existing_locations + ['A Container']
     choice = txt.getOption(prompt, existing_locations)
-    if choice != len(existing_locations):
+    if choice < len(existing_locations):
        starting_loc = existing_locations[choice]
     else:
         containers = getContainers(game, level)
@@ -150,6 +250,42 @@ def chooseStartingLocation(game, level):
                                         for container in containers]
         choice = txt.getOption(prompt, options)
         starting_loc = containers[choice]
-    formatted_loc = f"<{level}.locations.{starting_loc}>.name"
+    formatted_loc = f"{getReference('locations', level, starting_loc)}.name"
     return formatted_loc
+
+def chooseAnyLocation(game, allow_new_location = False):
+    level = chooseLevel(game)
+    prompt = "Choose Location"
+    locations = getLocations(game, level)
+    if allow_new_location:
+        options = locations + ["New Location"]
+    choice = txt.getOption(prompt, options)
+    location = options[choice]
+    if location == 'New Location':
+        location = txt.getStr('Location Name (New)')
+    return getReference('locations', level, location)
+
+def chooseLocation(game, level, allow_new_location = False):
+    prompt = "Choose a Location"
+    options = getLocations(game, level)
+    if allow_new_location:
+        options.append('New Location')
+    choice = txt.getOption(prompt, options)
+    return options[choice]
+
+def chooseConversation(game, level):
+    prompt = "Choose a Conversation"
+    existing_conversations = getConversations(game, level)
+    options = existing_conversations
+    choice = txt.getOption(prompt, existing_conversations)
+    if choice < len(existing_conversations):
+       conversation = existing_conversations[choice]
+    formatted_convo = {
+        'conversation': f"{getReference('conversations', level, conversation)}.conversation",
+        'initial_msg': f"{getReference('conversations', level, conversation)}.initial_msg",
+    }
+    return formatted_convo
+
+def getReference(obj_type, level, obj_name):
+    return f"<{level}.{obj_type}.{obj_name.lower().replace(' ', '_')}>"
 

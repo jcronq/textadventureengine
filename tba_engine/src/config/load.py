@@ -6,7 +6,7 @@ import json
 
 from src.load.itemLoader import itemLoader
 from src.load.locationLoader import locationLoader
-from src.load.characterLoader import locationLoader
+from src.load.characterLoader import characterLoader
 from src.load.connectionLoader import connectionLoader
 
 from src.core.game import Game
@@ -18,6 +18,8 @@ obj_loaders = {
     "characters": characterLoader,
 }
 
+# TODO: Note to self, handle location adjacencies better so objects don't needt
+# to be loadded beforeresolving dependencies
 class GameLoader:
     def __init__(self, game_name):
         self.game = None
@@ -29,7 +31,8 @@ class GameLoader:
         return Game(
             self.initial_conditions['start_location'],
             self.extractLocations(self.object_tree, self.initial_conditions),
-            self.extractItems(self.object_tree, self.initial_conditions)
+            self.extractItems(self.object_tree, self.initial_conditions),
+            self.extractCharacters(self.object_tree, self.initial_conditions)
         )
 
     def loadGameConfigs(self, game):
@@ -40,6 +43,7 @@ class GameLoader:
                 'items': util.getItems(game, level),
                 'locations': util.getLocations(game, level),
                 'characters': util.getCharacters(game, level),
+                'conversations': util.getConversations(game, level),
             }
 
         self.configs = {}
@@ -65,6 +69,9 @@ class GameLoader:
     def extractItems(self, object_tree, initial_conditions):
         return self.extractObjs(object_tree, initial_conditions, 'items')
 
+    def extractCharacters(self, object_tree, initial_conditions):
+        return self.extractObjs(object_tree, initial_conditions, 'characters')
+
     def extractObjs(self, object_tree, initial_conditions, d_type):
         loadables = initial_conditions.get('load', []) + ['common']
         types = []
@@ -89,8 +96,6 @@ class GameLoader:
         for level_name, level_data in obj_resolved_data.items():
             level_objs = self.object_tree[level_name]
             for location_name, location_data in level_data.get('locations', {}).items():
-                # if location_name == 'the_cutlass':
-                #     import pdb; pdb.set_trace()
                 location_obj = level_objs['locations'][location_name]
                 connectionLoader(
                     location_obj,
@@ -104,9 +109,10 @@ class GameLoader:
             obj_tree[level_name] = {}
             for obj_type, objects in level_data.items():
                 obj_tree[level_name][obj_type] = {}
-                obj_loader = obj_loaders[obj_type]
-                for obj_name, obj_datum in objects.items():
-                    obj_tree[level_name][obj_type][obj_name] = obj_loader(obj_datum)
+                if obj_type in obj_loaders:
+                    obj_loader = obj_loaders[obj_type]
+                    for obj_name, obj_datum in objects.items():
+                        obj_tree[level_name][obj_type][obj_name] = obj_loader(obj_datum)
         return obj_tree
 
     def resolveObjConfigs(self, resolved_raw_data, object_tree):

@@ -40,29 +40,44 @@ def getMsgOpt(conversation, cur_msg_obj):
     next_msg = cur_msg_obj.get('next', None)
     return conversaiont.get(next_msg, None)
 
-def createNewConvo():
-    game = util.chooseGame()
-    level = util.chooseLevel(game)
+def edit(game, level, char_name, location):
+    convo_name = f"{location}-{char_name}"
+    location_ref = util.getReference('locations', level, location)
 
-    convo_uniq_name = util.chooseUniqueName('conversations', game, level)
-    convo_config = util.loadConfig('conversations', game, level, convo_uniq_name)
-    if convo_config is None:
-        character_name = txt.getStr("Name", prompt_end=":", default=convo_uniq_name)
-        [start_msg, start_rsp] = makeMessagePair(None)
-        cur_msg = start_msg['uid']
-        cur_opt = start_rsp['uid']
+    convo_config = util.loadConfig('conversations', game, level, convo_name)
+    conversation = convo_config['conversation']
+    start_msg = conversation[convo_config['initial_msg']]
+    cur_msg = start_msg['uid']
+    cur_opt = conversation[cur_msg]['next']
 
-        conversation = {
-            cur_msg: start_msg,
-            cur_opt: start_rsp,
-        }
-    else:
-        conversation = convo_config['conversation']
-        character_name = convo_config['name']
-        start_msg = conversation[convo_config['initial_msg']]
-        cur_msg = start_msg['uid']
-        cur_opt = conversation[cur_msg]['next']
+    convo_config['conversation'] = conversationTreeEditor(conversation)
 
+    util.saveGameObj('conversations', game, level, convo_name, convo_config)
+
+def createNew(game, level, char_name, location=None):
+    if location is None:
+        location = util.chooseAnyLocation(allow_new_locations=False)
+    [start_msg, start_rsp] = makeMessagePair(None)
+    cur_msg = start_msg['uid']
+    cur_opt = start_rsp['uid']
+
+    conversation = {
+        cur_msg: start_msg,
+        cur_opt: start_rsp,
+    }
+
+    conversation = conversationTreeEditor(conversation)
+    convo_name = f"{location}-{char_name}"
+    convo_config = {
+        'initial_msg': start_msg['uid'],
+        'name': char_name,
+        'location': location,
+        'conversation': conversation,
+    }
+
+    util.saveGameObj('conversations', game, level, convo_name, convo_config)
+
+def conversationTreeEditor(conversation):
     cont = True
     while cont:
         output = txt.formatHtmlBlock(describe.conversationMessage(
@@ -78,8 +93,9 @@ def createNewConvo():
             {'key': 'b', 'text':'back'},
             {'key': 'e', 'text':'Edit'},
             {'key': 'a', 'text':'Add Option'},
-            {'key': 'rm', 'text':'Remove Option'},
+            {'key': 'rm','text':'Remove Option'},
             {'key': 'w', 'text':'write-to-file'},
+            {'key': ':q','text':'quit'},
         ]
         cmd = txt.promptInput(' ', inputOptions)
         print(cmd)
@@ -127,16 +143,7 @@ def createNewConvo():
         elif cmd[0] == 'rm':
             del conversation[cur_opt]['opt'][cmd[1]]
 
-        elif cmd[0] == 'w':
-            util.saveGameObj('conversations', game, level, convo_uniq_name,
-                {
-                    'config':{
-                        'initial_msg': start_msg['uid'],
-                        'name': character_name,
-                        'conversation': conversation
-                    }
-                })
-        elif cmd[0] == 'quit':
-            return
+        elif cmd[0] == ':q':
+            return conversation
 
-createNewConvo()
+#useful later

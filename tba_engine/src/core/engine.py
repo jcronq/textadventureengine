@@ -5,6 +5,7 @@ from src.actions.take import take
 from src.actions.examine import examine
 from src.actions.inventory import inventory
 from src.actions.drop import drop
+from src.actions.converse import converse
 
 GAME_RUNNING = True
 
@@ -23,7 +24,7 @@ command_handlers = {
     "examine": examine,
     "inventory": inventory,
     "drop": drop,
-    "talk": talk,
+    "converse": converse,
     "print": printCommand,
     "quit": quitGame,
 }
@@ -36,14 +37,16 @@ class Engine:
     def update(self, game_printer, in_str, debug=False):
         if self.game.inConversation():
             command_obj = {
-                'intent': 'talk',
+                'intent': 'converse',
                 'args': {
                     'character': self.game.getConversingNPC(),
-                    'selection': self.parser.parseConvoInput(in_str),
+                    'selection': in_str,
                 }
             }
         else:
             command_obj = self.parser.parse_command(in_str)
+        # if command_obj['intent'] == 'converse':
+        #     breakpoint()
         if debug:
             txt.utilPrint(f"State: {self.game.getFullState()}")
         command = command_handlers.get(command_obj['intent'], None)

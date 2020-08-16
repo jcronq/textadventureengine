@@ -10,6 +10,8 @@ malformed_move_request = "*I don't understand where you want me to go.*"
 
 malformed_talk_request = "*I don't understand who you want me to talk to.*"
 
+non_numeric_selection = "Invalid selection: Expecting a number."
+
 empty_convo_selection = "Invalid selection"
 
 def missingObj(obj_name):

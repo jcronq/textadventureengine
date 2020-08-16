@@ -1,4 +1,5 @@
 config:
+  location: <level_0.locations.the_market_square>.name
   conversation:
     0a964acc-ac9d-4fab-b4bb-e8c60203d495:
       opt: []

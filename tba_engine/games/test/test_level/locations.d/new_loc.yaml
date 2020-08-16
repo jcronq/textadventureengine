@@ -1,0 +1,9 @@
+connections:
+- direction: north
+  location: <test_level.locations.tst>
+  travel_blockade: null
+  travel_description: null
+description: a new location
+examine_text: its a new to me at least
+name: New Loc
+uniq_name: new_loc

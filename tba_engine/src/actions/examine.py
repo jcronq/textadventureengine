@@ -41,5 +41,6 @@ def getItemTextBlock(game, item):
 def getLocationTextBlock(game):
     current_location = game.getPlayerLocation()
     items = game.getItemsInLocation(current_location.name)
-    return examineTxt.location(current_location, items)
+    characters = game.getCharactersInLocation(current_location.name)
+    return examineTxt.location(current_location, items, characters)
 

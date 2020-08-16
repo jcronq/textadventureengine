@@ -15,6 +15,17 @@ def parseDropArgs(command_parts):
         'item': " ".join(command_parts)
     }
 
+def parseConverseArgs(command_parts):
+    if 'to' in command_parts:
+        char = command_parts[command_parts.index('to')+1:]
+    else:
+        char = None
+
+    return {
+        'character': " ".join(char),
+        'selection': " ".join(command_parts)
+    }
+
 def parseTakeArgs(command_parts):
     if 'from' in command_parts:
         itemName = " ".join(command_parts[0:command_parts.index('from')])
@@ -50,7 +61,7 @@ class Parser:
         "drop": parseDropArgs,
         "inventory": None,
         "use": None,
-        "converse": None,
+        "converse": parseConverseArgs,
         "sequence": None,
         "special": None,
         'print': parsePrintArgs,

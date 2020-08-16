@@ -1,0 +1,13 @@
+# This name MUST match the name of the file.
+config:
+  description: A tall man in richly colored robes.
+  dialogue: 
+      conversation: <level_0.conversations.jim_convo>.conversation
+      initial_msg: <level_0.conversations.jim_convo>.initial_msg
+  drop_text: null
+  examine_text: I don't want to get that close...
+  is_container: false
+  name: Grand Magus
+  start_location: <level_0.locations.the_market_square>.name
+  take_text: null
+  takeable: false

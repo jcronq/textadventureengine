@@ -1,7 +1,7 @@
 class Item:
     def __init__(self, uniq_name, name, description, start_location,
                  examine_text=None, takeable=True, take_text=None,
-                 is_container=False, drop_text=None):
+                 drop_text=None, is_container=False):
         self.uniq_name = uniq_name
         self.name = name
         self.description = description
