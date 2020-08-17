@@ -1,0 +1,9 @@
+connections:
+- direction: west
+  location: <test_level.locations.branching_room>.name
+  travel_blockade: null
+  travel_description: I go west
+description: Eastern most room in test game.
+examine_text: I win?
+name: east choice
+uniq_name: east_choice

@@ -1,9 +1,0 @@
-connections:
-- direction: south
-  location: <test_level.locations.new_loc>
-  travel_blockade: null
-  travel_description: null
-description: tst desc
-examine_text: tst ex
-name: tst
-uniq_name: tst

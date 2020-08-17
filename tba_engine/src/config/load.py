@@ -29,7 +29,7 @@ class GameLoader:
 
     def getGameObject(self):
         return Game(
-            self.initial_conditions['start_location'],
+            self.initial_conditions.get('start_location', None),
             self.extractLocations(self.object_tree, self.initial_conditions),
             self.extractItems(self.object_tree, self.initial_conditions),
             self.extractCharacters(self.object_tree, self.initial_conditions)
@@ -53,15 +53,17 @@ class GameLoader:
                 self.configs[level][obj_type] = {}
                 for obj_name in objs:
                     obj_cfg = util.loadConfig(obj_type, game, level, obj_name)
-                    obj_cfg['uniq_name'] = obj_name
+                    # obj_cfg['uniq_name'] = obj_name
                     self.configs[level][obj_type][obj_name] = obj_cfg
 
     def createGameObjects(self):
         self.str_data = self.resolveRawConfigs(self.configs, self.configs)
-        self.object_tree = self.buildGameObjects(self.str_data)
-        self.obj_data = self.resolveObjConfigs(
-            self.str_data, self.object_tree)
-        self.connectLocations(self.obj_data)
+        self.str_data = self.resolveObjConfigs(self.str_data, self.str_data)
+        self.obj_data = self.buildGameObjects(self.str_data)
+        self.object_tree = self.obj_data
+        # self.obj_data = self.resolveObjConfigs(
+        #     self.str_data, self.object_tree)
+        # self.connectLocations(self.obj_data)
 
     def extractLocations(self, object_tree, initial_conditions):
         return self.extractObjs(object_tree, initial_conditions, 'locations')
@@ -73,23 +75,22 @@ class GameLoader:
         return self.extractObjs(object_tree, initial_conditions, 'characters')
 
     def extractObjs(self, object_tree, initial_conditions, d_type):
-        loadables = initial_conditions.get('load', []) + ['common']
         types = []
-        load_location_objs = []
-        for loadable in loadables:
-            load_location_objs.append(object_tree.get(loadable, {}).get(d_type, {}))
-
-        for load_obj in load_location_objs:
-            for _, obj in load_obj.items():
+        for _, level_data in object_tree.items():
+            for _, obj in level_data.get(d_type, {}).items():
                 types.append(obj)
+
         return types
 
     def loadGameMeta(self, game):
         game_meta = util.getGameMeta(game)
-        raw_init_cond = game_meta['initial_condition']
-        str_init_cond = self.resolveRawConfigs(raw_init_cond, self.str_data)
-        obj_init_cond = self.resolveObjConfigs(str_init_cond, self.object_tree)
-        self.initial_conditions = obj_init_cond
+        if game_meta is not None:
+            raw_init_cond = game_meta['initial_condition']
+            str_init_cond = self.resolveRawConfigs(raw_init_cond, self.str_data)
+            obj_init_cond = self.resolveObjConfigs(str_init_cond, self.object_tree)
+            self.initial_conditions = obj_init_cond
+        else:
+            self.initial_conditions = {}
 
     def connectLocations(self, obj_resolved_data):
         locations_data = {}

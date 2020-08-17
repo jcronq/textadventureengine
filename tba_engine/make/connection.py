@@ -48,12 +48,13 @@ def createNewBlocker(game):
 def editBlocker(game, blocker):
     cmd = ['']
     while cmd[0] != ':q':
+        print(yaml.dump(blocker))
         options = [
             {'key': 's', 'text':'replace state'},
             {'key': 'v', 'text':'replace value'},
             {'key': 'f', 'text':'repplace failure_text'},
             {'key': 'p', 'text':'replace success_text'},
-            {'key': ':q', 'test': 'quit'},
+            {'key': ':q', 'text': 'quit'},
         ]
         cmd = txt.promptInput('Blocker Editor', options)
 
@@ -69,6 +70,7 @@ def editBlocker(game, blocker):
     return blocker
 
 def addInboundConnectionToRef(game, from_ref, from_direction, location_ref):
+    # breakpoint()
     ref_obj = util.extractReference(location_ref)
     loc_config = util.loadConfigFromRef(game, location_ref)
     from_ref_obj = util.extractReference(from_ref)
@@ -80,7 +82,7 @@ def addInboundConnectionToRef(game, from_ref, from_direction, location_ref):
 
     reflecting_connection = {
         'direction': to_direction,
-        'location': from_ref,
+        'location': from_ref+'.name',
         'travel_blockade': None,
         'travel_description': None,
     }
@@ -150,23 +152,24 @@ def createNew(game, location_level, location_name):
         travel_blockade = None
 
     # Allow inter-level connections (level changes smoothly via travel)
-    location_ref = getLocationRef(game, location_level)
+    location_ref = getLocationRef(game, location_level, location_name)
     from_ref = util.getReference('locations', location_level, location_name)
     addInboundConnectionToRef(game, from_ref, direction, location_ref)
 
     return {
         'direction': direction,
-        'location': location_ref,
+        'location': location_ref+'.name',
         'travel_blockade': travel_blockade,
         'travel_description': to_text,
     }
 
-def getLocationRef(game, location_level):
+def getLocationRef(game, location_level, location_name):
     if txt.getYesNo("Connecting to same level? (y/n)"):
         level = location_level
     else:
         level = util.chooseLevel(game)
-    location = util.chooseLocation(game, level, allow_new_location=True)
+    location = util.chooseLocation(game, level, allow_new_location=True,
+                                   exclude = [location_name.lower().replace(' ', '_')])
     if location == 'New Location':
         location = txt.getStr('Location Name (new)')
     location_ref = util.getReference('locations', level, location)
@@ -189,7 +192,7 @@ def edit(game, connection_obj, location_level, location_name):
             connection_obj['direction'] = txt.getStr("Direction")
         elif cmd[0] == 'l':
             current_ref = connection_obj['location']
-            location_ref = getLocationRef(game, location_level)
+            location_ref = getLocationRef(game, location_level, location_name)
             from_ref = util.getReference('locations', location_level, location_name)
 
             if current_ref is not None:
@@ -198,7 +201,11 @@ def edit(game, connection_obj, location_level, location_name):
 
             connection_obj['location'] = location_ref
         elif cmd[0] == 'b':
-            connection_obj['travel_blockade'] = editBlocker(game, connection_obj['travel_blockade'])
+            if connection_obj['travel_blockade'] is not None:
+                connection_obj['travel_blockade'] = editBlocker(game, connection_obj['travel_blockade'])
+            else:
+                connection_obj['travel_blockade'] = createNewBlocker(game)
+
         elif cmd[0] == 'de':
             connection_obj['travel_description'] = txt.getStr('Travel Description')
 

@@ -41,7 +41,7 @@ def move(game, args={}):
 
             game.report(describe.move(current_location, path))
 
-            game.setPlayerLocation(path)
+            game.setPlayerLocation(current_location.connections[path])
             examine(game, {})
 
 def blockadeClear(game, current_location, new_location_name):

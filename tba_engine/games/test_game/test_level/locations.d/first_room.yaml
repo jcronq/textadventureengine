@@ -1,0 +1,13 @@
+connections:
+- direction: south
+  location: <test_level.locations.intro_loc>.name
+  travel_blockade: null
+  travel_description: I go south
+- direction: north
+  location: <test_level.locations.branching_room>.name
+  travel_blockade: null
+  travel_description: I go north
+description: The first room off of the intro game.
+examine_text: There's not much to do here.
+name: first room
+uniq_name: first_room

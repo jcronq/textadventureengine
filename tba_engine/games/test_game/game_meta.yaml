@@ -1,0 +1,2 @@
+initial_condition:
+  start_location: <test_level.locations.intro_loc>.name

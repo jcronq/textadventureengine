@@ -1,0 +1,9 @@
+description: An ordinary dagger.
+drop_text: Don't need this anymore.
+examine_text: Stick em with the pointy end.
+is_container: false
+name: dagger
+start_location: <test_level.locations.first_room>.name
+take_text: Who leaves a dagger lying around?
+takeable: true
+uniq_name: intro_loc-dagger

@@ -1,4 +1,2 @@
 initial_condition:
     start_location: <level_0.locations.se_gatehouse>.name
-    load: 
-        - level_0

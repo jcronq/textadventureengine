@@ -41,10 +41,10 @@ def getMsgOpt(conversation, cur_msg_obj):
     return conversaiont.get(next_msg, None)
 
 def edit(game, level, char_name, location):
-    convo_name = f"{location}-{char_name}"
     location_ref = util.getReference('locations', level, location)
 
-    convo_config = util.loadConfig('conversations', game, level, convo_name)
+    convo_config = util.loadLocalizedGameObj('conversations', game, level,
+                                             location, char_name)
     conversation = convo_config['conversation']
     start_msg = conversation[convo_config['initial_msg']]
     cur_msg = start_msg['uid']
@@ -52,7 +52,43 @@ def edit(game, level, char_name, location):
 
     convo_config['conversation'] = conversationTreeEditor(conversation)
 
-    util.saveGameObj('conversations', game, level, convo_name, convo_config)
+    util.saveLocalizedGameObj('conversations', game, level, location, char_name, convo_config)
+
+def editor(game, level, char_name, conversations):
+    options = [
+        {'key': 'c', 'text': 'create new'},
+        {'key': 'e', 'text': 'bind existing'},
+    ]
+    cmd = txt.promptInput('Conversation Editor', options)
+    if cmd[0] == 'e':
+        choice = txt.getOption('Select Conversation', conversations)
+
+        options = [
+            {'key': 'l', 'text': 'location'},
+            {'key': 'co', 'text': 'conversation'},
+        ]
+        s_cmd = txt.promptInput('Conversation Editor', options)
+        if s_cmd[0] == 'l':
+            [old_loc, char_name] = conversations[choice].split('-')
+            new_loc = util.chooseLocation(game, level, exclude=[old_loc])
+            game_obj = util.loadLocalizedGameObj('conversations',
+                                     game, level, old_loc, char_name)
+
+            game_obj['location'] = new_loc
+            util.removeLocalizedGameObj('conversations',
+                                        game, level, old_loc, char_name)
+            util.saveLocalizedGameObj('conversations',
+                                     game, level, new_loc, char_name, game_obj)
+            conversations.remove(conversations[choice])
+            conversations.append(util.getLocalizedReference('conversations',
+                                                level, location, char_name))
+        if s_cmd[0] == 'co':
+            [location, char_name] = conversations[choice].split('-')
+            edit(game, level, char_name, location)
+    elif cmd[0] == 'c':
+        conversations.append(createNew(game, level, char_name))
+
+    return conversations
 
 def createNew(game, level, char_name, location=None):
     if location is None:
@@ -66,7 +102,7 @@ def createNew(game, level, char_name, location=None):
         cur_opt: start_rsp,
     }
 
-    conversation = conversationTreeEditor(conversation)
+    conversation = conversationTreeEditor(conversation, char_name, cur_msg)
     convo_name = f"{location}-{char_name}"
     convo_config = {
         'initial_msg': start_msg['uid'],
@@ -75,9 +111,13 @@ def createNew(game, level, char_name, location=None):
         'conversation': conversation,
     }
 
-    util.saveGameObj('conversations', game, level, convo_name, convo_config)
+    util.saveLocalizedGameObj('conversations', game, level, location,
+                                     char_name, convo_config)
+    return util.getLocalizedReference('conversations', level, location,
+                                     char_name)
 
-def conversationTreeEditor(conversation):
+def conversationTreeEditor(conversation, character_name, cur_msg):
+    cur_opt = conversation[cur_msg]['next']
     cont = True
     while cont:
         output = txt.formatHtmlBlock(describe.conversationMessage(

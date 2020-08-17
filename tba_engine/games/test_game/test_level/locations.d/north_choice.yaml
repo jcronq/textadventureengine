@@ -1,0 +1,9 @@
+connections:
+- direction: south
+  location: <test_level.locations.branching_room>.name
+  travel_blockade: null
+  travel_description: I go south
+description: The northernmost room in test game.
+examine_text: I win i guess.
+name: north choice
+uniq_name: north_choice

@@ -6,8 +6,6 @@ def converse(game, args):
     character = args.get('character', None)
     selection = args.get('selection', None)
 
-
-
     if character is None and selection is None:
         game.report(messageTxt.malformed_talk_request)
 
@@ -30,7 +28,7 @@ def converse(game, args):
 
             # Start conversation
             game.setInConversation(True)
-            conv_obj = char_obj.converse('init', 0)
+            conv_obj = char_obj.converse('init', 0, player_location)
 
     # In conversation already
     else:
@@ -43,16 +41,18 @@ def converse(game, args):
             return
 
         char_obj = game.getCharacter(character)
-        conv_obj = char_obj.converse(game.getConversationRef(), int(selection))
+        player_location = game.getPlayerLocation().name
+        conv_obj = char_obj.converse(game.getConversationRef(), int(selection), player_location)
 
     game.setConversationRef(character, conv_obj['ref'])
-    game.report(
-        describe.conversationMessage(
-            character,
-            conv_obj['npc_msg']['txt'],
-            conv_obj['opts']['opt'],
+    if conv_obj['npc_msg'] is not None:
+        game.report(
+            describe.conversationMessage(
+                character,
+                conv_obj['npc_msg']['txt'],
+                conv_obj['opts']['opt'],
+            )
         )
-    )
     if conv_obj['end']:
         game.setInConversation(False)
 

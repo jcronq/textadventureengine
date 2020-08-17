@@ -1,0 +1,17 @@
+conversation:
+  7a1a8911-8f73-4390-a4ad-01a8b9a7e74e:
+    opt:
+    - next: null
+      txt: bye
+    parent: c7983f2e-a80d-45b2-b492-a5905330d626
+    type: player-opt
+    uid: 7a1a8911-8f73-4390-a4ad-01a8b9a7e74e
+  c7983f2e-a80d-45b2-b492-a5905330d626:
+    next: 7a1a8911-8f73-4390-a4ad-01a8b9a7e74e
+    parent: null
+    txt: hi
+    type: npc
+    uid: c7983f2e-a80d-45b2-b492-a5905330d626
+initial_msg: c7983f2e-a80d-45b2-b492-a5905330d626
+location: intro_loc
+name: tim

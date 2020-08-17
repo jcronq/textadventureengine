@@ -20,7 +20,7 @@ def createNew(game, level):
     }
 
     util.saveGameObj('locations', game, level, location_name, location_obj)
-    return location_name
+    return location_name.lower().replace(' ', '_')
 
 def edit(game, level, location):
     print(game, level, location)
@@ -51,5 +51,5 @@ def edit(game, level, location):
         util.removeGameObj('locations', game, level, original_name, location_obj)
     util.saveGameObj('locations', game, level, location_obj['name'], location_obj)
 
-    return location_obj['name']
+    return location_obj['name'].lower().replace(' ', '_')
 

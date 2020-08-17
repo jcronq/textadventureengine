@@ -1,0 +1,11 @@
+description: it's tim
+dialogue:
+- <test_level.conversations.intro_loc-tim>
+drop_text: null
+examine_text: tim
+is_container: true
+name: tim
+start_location: <test_level.locations.first_room>.name
+take_text: null
+takeable: false
+uniq_name: tim

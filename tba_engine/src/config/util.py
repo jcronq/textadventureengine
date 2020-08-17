@@ -79,6 +79,11 @@ def getGameMeta(game):
     except:
         return None
 
+def saveGameMeta(game, meta_obj):
+    meta_file_name = getMetaFile(game)
+    with open(meta_file_name, 'w') as f:
+        f.write(yaml.dump(meta_obj))
+
 def getGameStartLocation(game):
     try:
         meta = getGameMeta(game)
@@ -108,7 +113,7 @@ def extractReferenceToArray(raw_ref):
     else:
         return matches[0].split('.')
 
-def removeGameObj(obj_type, game, level, obj_name, obj):
+def removeGameObj(obj_type, game, level, obj_name):
     obj_name = obj_name.replace(' ', '_')
     root = getObjRoot(obj_type, game, level)
     os.remove(f'{root}/{obj_name}.yaml')
@@ -128,10 +133,41 @@ def loadConfigFromRef(game, obj_ref):
     return loadConfig(obj_parts['obj_type'], game, obj_parts['level'],
                       obj_parts['obj_name'])
 
+def removeLocalizedGameObj(obj_type, game, level, location, item_name):
+    location = location.lower().replace(' ', '_')
+    item_name = item_name.lower().replace(' ', '_')
+    obj_name = f'{location}-{item_name}'
+    removeGameObj(obj_type, game, level, obj_name)
+
+def removeItem(game, level, location, item_name):
+    removeLocalizedGameObj('items', game, level, location, item_name)
+
+def saveItem(game, level, location, item_name, item_obj):
+    saveLocalizedGameObj('items', game, level, location, item_name, item_obj)
+
+def saveLocalizedGameObj(obj_type, game, level, location, item_name, item_obj):
+    location = location.lower().replace(' ', '_')
+    item_name = item_name.lower().replace(' ', '_')
+    saveGameObj(obj_type, game, level, f'{location}-{item_name}', item_obj)
+    return f'{location}-{item_name}'
+
+def loadItems(game, level, location):
+    location = location.lower().replace(' ', '_')
+    item_names = getItems(game, level)
+    items = list(filter(lambda item_name: location in item_name, item_names))
+    return [loadConfig('items', game, level, item_name) for item_name in items]
+
+def loadItem(game, level, location, item_name):
+    loadLocalizedGameObj('items', game, level, location, item_name)
+
+def loadLocalizedGameObj(obj_type, game, level, location, item_name):
+    location = location.lower().replace(' ', '_')
+    item_name = item_name.lower().replace(' ', '_')
+    return loadConfig(obj_type, game, level, f'{location}-{item_name}')
+
 def loadConfig(obj_type, game, level, obj_name):
     flat_name = obj_name.replace(' ', '_').lower()
     file_name = getObjFileName(obj_type, game, level, flat_name)
-    print(file_name)
     try:
         with open(file_name, 'r') as f:
             content = f.read()
@@ -221,20 +257,11 @@ def chooseUniqueName(obj_type, game, level):
         item_uniq_name = txt.getStr(f"{item_uniq_name} is already taken. Please choose another\nUnique Name")
     return item_uniq_name
 
-# def chooseUniqueName(obj_type, game, level):
-#     existing_objs = getGameObjects(obj_type, game, level)
-#     existing_names = [obj.replace('_', ' ').lower() for obj in existing_objs]
-#     prompt = "Choose a file to load"
-#     options = [f"Create New {obj_type}"] + existing_names
-#     choice = txt.getOption(prompt, options)
-#     if choice != 0:
-#         choice -= 1
-#         return existing_objs[choice]
-#     else:
-#         item_uniq_name = txt.getStr("Unique Name")
-#         while item_uniq_name.lower().replace('_', ' ') in existing_names:
-#             item_uniq_name = txt.getStr(f"{item_uniq_name} is already taken. Please choose another\nUnique Name")
-#         return item_uniq_name.lower().replace(' ', '_')
+def chooseItem(game, level, location):
+    items = loadItems(game, level, location)
+    options = [item['name'] for item in items]
+    choice = txt.getOption('Choose an item', options)
+    return options[choice]
 
 def chooseStartingLocation(game, level):
     prompt = "Choose a Starting Location"
@@ -265,9 +292,11 @@ def chooseAnyLocation(game, allow_new_location = False):
         location = txt.getStr('Location Name (New)')
     return getReference('locations', level, location)
 
-def chooseLocation(game, level, allow_new_location = False):
+def chooseLocation(game, level, allow_new_location = False, exclude = []):
     prompt = "Choose a Location"
     options = getLocations(game, level)
+    for exclusion in exclude:
+        options.remove(exclusion)
     if allow_new_location:
         options.append('New Location')
     choice = txt.getOption(prompt, options)
@@ -286,6 +315,20 @@ def chooseConversation(game, level):
     }
     return formatted_convo
 
+def chooseCharacter(game, level, location):
+    prompt = "Choose a Character"
+    character_names = getCharacters(game, level)
+    characters = [loadConfig('characters', game, level, char_name) for char_name in character_names]
+    char_objs =filter(lambda char: extractReference(char['start_location'])['obj_name'] == location, characters)
+    options = [char_obj['name'] for char_obj in char_objs]
+    choice = txt.getOption(prompt, options)
+    return options[choice]
+
 def getReference(obj_type, level, obj_name):
     return f"<{level}.{obj_type}.{obj_name.lower().replace(' ', '_')}>"
+
+def getLocalizedReference(obj_type, level, location, obj_name):
+    obj_name = obj_name.lower().replace(' ', '_')
+    location = location.lower().replace(' ', '_')
+    return f"<{level}.{obj_type}.{location}-{obj_name}>"
 

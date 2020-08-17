@@ -1,9 +1,0 @@
-connections:
-- direction: north
-  location: <test_level.locations.towny>
-  travel_blockade: null
-  travel_description: you go north
-description: null
-examine_text: null
-name: Towny
-uniq_name: towny

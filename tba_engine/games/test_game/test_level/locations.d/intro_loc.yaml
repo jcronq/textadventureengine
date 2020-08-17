@@ -1,0 +1,9 @@
+connections:
+- direction: north
+  location: <test_level.locations.first_room>.name
+  travel_blockade: null
+  travel_description: I go north
+description: This is where the game starts.
+examine_text: The game started here.
+name: intro loc
+uniq_name: intro_loc

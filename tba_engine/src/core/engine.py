@@ -6,17 +6,13 @@ from src.actions.examine import examine
 from src.actions.inventory import inventory
 from src.actions.drop import drop
 from src.actions.converse import converse
+from src.actions.printCommand import printCommand
 
 GAME_RUNNING = True
 
 def quitGame(game, args):
     global GAME_RUNNING
     GAME_RUNNING = False
-
-def printCommand(game, args):
-    target = args.get('target', None)
-    if target is None or target == 'state':
-        print(game.stateManager.state)
 
 command_handlers = {
     "move": move,
@@ -46,7 +42,7 @@ class Engine:
         else:
             command_obj = self.parser.parse_command(in_str)
         # if command_obj['intent'] == 'converse':
-        #     breakpoint()
+            # breakpoint()
         if debug:
             txt.utilPrint(f"State: {self.game.getFullState()}")
         command = command_handlers.get(command_obj['intent'], None)

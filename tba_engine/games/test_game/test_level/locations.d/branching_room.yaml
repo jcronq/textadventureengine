@@ -1,0 +1,17 @@
+connections:
+- direction: south
+  location: <test_level.locations.first_room>.name
+  travel_blockade: null
+  travel_description: i go south
+- direction: north
+  location: <test_level.locations.north_choice>.name
+  travel_blockade: null
+  travel_description: I go north
+- direction: east
+  location: <test_level.locations.east_choice>.name
+  travel_blockade: null
+  travel_description: I go east
+description: This room has options on where we can go.
+examine_text: I can go north, or east.
+name: branching room
+uniq_name: branching_room

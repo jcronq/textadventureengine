@@ -98,6 +98,10 @@ class Game:
             return []
         return list(filter(filter_func, self.items.values()))
 
+    def getRoomCharacters(self):
+        room_name = self.getPlayerLocation().name
+        return self.getCharactersInLocation(room_name)
+
     def getRoomContents(self):
         room_name = self.getPlayerLocation().name
         filter_func = partial(itemInLocation, self, room_name)
@@ -132,7 +136,6 @@ class Game:
         return self.items.get(item_name.lower(), default)
 
     def getCharacter(self, char_name, default=None):
-        breakpoint()
         return self.characters.get(char_name.lower(), default)
 
     def getItemsInLocation(self, test_location):

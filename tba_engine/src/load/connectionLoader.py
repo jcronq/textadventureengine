@@ -5,16 +5,13 @@ def connectionLoader(location, connections, level_name):
         except:
             print(f"{location.name}, {connections}")
             raise Exception(f"'direction' not specified in {level_name}.{location.name}")
-        try:
-            con_location = connection['location']
-        except:
-            print(f"{location.name}, {connections}")
-            raise Exception(f"'location' not specified in {level_name}.{location.name}")
-        travel_blockade = connection.get('travel_blockade', {})
-        travel_description = connection.get('travel_description', {})
 
-        location.addConnection(con_direction, con_location,
-            travel_description, travel_blockade)
+        location_name = connection.get('location')
+        travel_blockade = connection.get('travel_blockade', {})
+        travel_description = connection.get('travel_description', None)
+
+        location.addConnection(con_direction, location_name,
+                               travel_description, travel_blockade)
 
     return location
 

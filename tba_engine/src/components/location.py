@@ -22,24 +22,16 @@ class Location:
         self.blockades = {}
         self.examine_text = None
 
-    def addConnection(self, direction, location,
-                            travel_description={},
+    def addConnection(self, direction, location_name,
+                            travel_description,
                             travel_blockade={}):
         if direction.lower() in self.connections:
             raise DuplicateConnectionException(self.uniq_name, direction)
 
-        self.connections[direction.lower()] = location
-        self.blockades[direction.lower()] = travel_blockade.get('to', None)
-        self.travel_descriptions[direction.lower()] = travel_description.get('to',None)
-
-        if direction in cardinal_map:
-            location.addAdjacentLocation(cardinal_map[direction], self, {
-                    'to':travel_description.get('from', None),
-                    'from':travel_description.get('to', None)
-                },{
-                    'to':travel_blockade.get('from', None),
-                    'from':travel_blockade.get('to', None)
-            })
+        self.connections[direction.lower()] = location_name
+        if travel_blockade is not None:
+            self.blockades[direction.lower()] = travel_blockade.get('to', None)
+        self.travel_descriptions[direction.lower()] = travel_description
 
     def hasPath(self, path):
         return path.lower() in self.connections.keys()

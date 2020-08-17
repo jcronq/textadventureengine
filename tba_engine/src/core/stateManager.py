@@ -44,10 +44,7 @@ class StateManager:
     def setState(self, location, value):
         qualifiers = location.split('.')
         state = self._setState(self.state, qualifiers, value)
-        self.triggerEventUpdates({
-            'state': location,
-            'value': value,
-        })
+        self.triggerUpdateEvents(location, value)
 
     def _getState(self, state, qualifiers, default = None):
         if qualifiers[0] in state:
